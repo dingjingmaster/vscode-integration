@@ -21,11 +21,12 @@ export function deactivate() {}
 
 class LlamaInlineCompletionProvider implements vscode.InlineCompletionItemProvider {
 	private readonly pendingCompletions = new Map<string, PendingCompletion>();
+	private readonly suppressNextAutomaticRequestOffset = new Map<string, number>();
 
 	public async provideInlineCompletionItems(
 		document: vscode.TextDocument,
 		position: vscode.Position,
-		_inlineCompletionContext: vscode.InlineCompletionContext,
+		inlineCompletionContext: vscode.InlineCompletionContext,
 		token: vscode.CancellationToken
 	): Promise<vscode.InlineCompletionList | undefined> {
 		const config = vscode.workspace.getConfiguration('vscodeIntegration');
@@ -41,6 +42,10 @@ class LlamaInlineCompletionProvider implements vscode.InlineCompletionItemProvid
 			return new vscode.InlineCompletionList([
 				new vscode.InlineCompletionItem(nextLine.insertText, new vscode.Range(position, position))
 			]);
+		}
+
+		if (this.shouldSkipSuppressedAutomaticRequest(documentKey, document, position, offset, inlineCompletionContext)) {
+			return undefined;
 		}
 
 		const maxPromptChars = config.get<number>('maxPromptChars', 4000);
@@ -128,9 +133,41 @@ class LlamaInlineCompletionProvider implements vscode.InlineCompletionItemProvid
 		pending.nextChunkIndex += 1;
 		if (pending.nextChunkIndex >= pending.chunks.length) {
 			this.pendingCompletions.delete(documentKey);
+			if (chunk.insertText instanceof vscode.SnippetString) {
+				this.suppressNextAutomaticRequestOffset.set(
+					documentKey,
+					pending.startOffset + pending.appliedText.length
+				);
+			}
 		}
 
 		return chunk;
+	}
+
+	private shouldSkipSuppressedAutomaticRequest(
+		documentKey: string,
+		document: vscode.TextDocument,
+		position: vscode.Position,
+		offset: number,
+		context: vscode.InlineCompletionContext
+	): boolean {
+		const suppressedOffset = this.suppressNextAutomaticRequestOffset.get(documentKey);
+		if (suppressedOffset === undefined) {
+			return false;
+		}
+		if (suppressedOffset !== offset) {
+			this.suppressNextAutomaticRequestOffset.delete(documentKey);
+			return false;
+		}
+		if (context.triggerKind !== vscode.InlineCompletionTriggerKind.Automatic) {
+			return false;
+		}
+		const lineText = document.lineAt(position.line).text;
+		if (lineText.trim().length > 0) {
+			return false;
+		}
+		this.suppressNextAutomaticRequestOffset.delete(documentKey);
+		return true;
 	}
 }
 
