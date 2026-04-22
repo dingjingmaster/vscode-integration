@@ -3,20 +3,80 @@
   "displayName": "vscode-integration",
   "description": "vscode integration",
   "repository": "https://github.com/dingjingmaster/vscode-integration",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": ">=1.60.0"
   },
   "categories": [
+    "Themes",
+    "Programming Languages",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configurationDefaults": {
+      "editor.fontFamily": "'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Source Code Pro', Menlo, Monaco, 'Courier New', monospace",
+      "editor.fontLigatures": true,
+      "terminal.integrated.fontFamily": "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace"
+    },
+    "configuration": {
+      "title": "Llama Inline Completion",
+      "properties": {
+        "vscodeIntegration.llamaServerBaseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:9999",
+          "description": "Base URL for llama-server."
+        },
+        "vscodeIntegration.llamaServerPath": {
+          "type": "string",
+          "default": "/completion",
+          "description": "Request path for completion API (for example /completion or /v1/completions)."
+        },
+        "vscodeIntegration.model": {
+          "type": "string",
+          "default": "",
+          "description": "Optional model name when llama-server exposes OpenAI-compatible APIs."
+        },
+        "vscodeIntegration.maxPromptChars": {
+          "type": "number",
+          "default": 4000,
+          "minimum": 512,
+          "description": "Maximum number of characters used from document context as prompt."
+        },
+        "vscodeIntegration.maxTokens": {
+          "type": "number",
+          "default": 128,
+          "minimum": 1,
+          "description": "Maximum number of generated tokens per inline completion request."
+        },
+        "vscodeIntegration.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Sampling temperature for generation."
+        },
+        "vscodeIntegration.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable llama-server powered inline completion."
+        }
+      }
+    },
     "commands": [
       {
         "command": "s.helloWorld",
         "title": "Hello World"
+      }
+    ],
+    "themes": [
+      {
+        "label": "Integration Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/dark-color-theme.json"
       }
     ]
   },
