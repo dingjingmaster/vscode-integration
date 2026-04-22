@@ -4,7 +4,7 @@
   "description": "vscode integration",
   "icon": "icon.png",
   "repository": "https://github.com/dingjingmaster/vscode-integration",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "dingjingmaster",
   "engines": {
     "vscode": ">=1.60.0"

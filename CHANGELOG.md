@@ -1,9 +1,5 @@
 # Change Log
 
-All notable changes to the "s" extension will be documented in this file.
+## 2026-04-22 (1.0.2)
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- Add: 修改代码补全方式 —— 按行接受
