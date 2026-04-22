@@ -3,7 +3,7 @@
   "displayName": "vscode-integration",
   "description": "vscode integration",
   "repository": "https://github.com/dingjingmaster/vscode-integration",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "engines": {
     "vscode": ">=1.60.0"
   },
@@ -23,7 +23,7 @@
       "terminal.integrated.fontFamily": "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace"
     },
     "configuration": {
-      "title": "Llama Inline Completion",
+      "title": "vscode integration",
       "properties": {
         "vscodeIntegration.llamaServerBaseUrl": {
           "type": "string",
@@ -66,12 +66,6 @@
         }
       }
     },
-    "commands": [
-      {
-        "command": "s.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "themes": [
       {
         "label": "Integration Dark",
